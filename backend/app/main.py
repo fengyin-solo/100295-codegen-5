@@ -10,9 +10,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.routers import ROUTERS
+from app.services.rental_store import rental_store
 from app.store import store
 
 app = FastAPI(title="特种设备安全管理平台", version="1.0.0")
+
+
+@app.on_event("startup")
+def bootstrap_rental_seed() -> None:
+    """租赁账单由计费引擎引导生成，启动时统一准备好，避免裸读拿到空表。"""
+    rental_store.ensure_ready()
 
 app.add_middleware(
     CORSMiddleware,
