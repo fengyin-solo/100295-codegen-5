@@ -30,6 +30,9 @@ class Store:
     def overview(self) -> dict[str, object]:
         modules: list[dict[str, object]] = []
         for name in self.module_names():
+            # 租赁结算的明细台账不在通用看板逐表统计，统一由 rental 服务汇总口径提供。
+            if name.startswith("rental_"):
+                continue
             rows = self.rows(name)
             modules.append({
                 "name": name,
